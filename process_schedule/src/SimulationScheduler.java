@@ -47,6 +47,8 @@ public class SimulationScheduler {
         tasks.sort(Comparator.comparingInt(p -> p.arrivalTime));
 
         int currentTime = 0;
+        List<Task> orderOfExecution = new ArrayList<>();
+
         for (Task t : tasks) {
             if (currentTime < t.arrivalTime) {
                 currentTime = t.arrivalTime;
@@ -54,17 +56,43 @@ public class SimulationScheduler {
             t.waitingTime = currentTime - t.arrivalTime;
             t.turnaroundTime = t.waitingTime + t.burstTime;
             currentTime += t.burstTime;
+            orderOfExecution.add(t);
         }
+// Display Gantt Chart
+System.out.println("\n📌 First-Come, First-Served (FCFS) Results:");
+System.out.print("Gantt Chart: ");
+for (Task t : orderOfExecution) {
+    System.out.print("| P" + t.pid + " ");
+}
+System.out.println("|");
+System.out.print("Timeline: ");
+currentTime = 0;
+for (Task t : orderOfExecution) {
+    System.out.print(currentTime + " ");
+    currentTime += t.burstTime;
+}
+System.out.println(currentTime);
 
-        System.out.println("\n📌 First-Come, First-Served (FCFS) Results:");
-        for (Task t : tasks) System.out.println(t);
-    }
+// Display the results for each process
+for (Task t : tasks) {
+    System.out.println(t);
+}
+
+// Calculate and print average waiting time and turnaround time
+double avgWT = tasks.stream().mapToInt(t -> t.waitingTime).average().orElse(0);
+double avgTAT = tasks.stream().mapToInt(t -> t.turnaroundTime).average().orElse(0);
+
+System.out.println("\nAverage Waiting Time (WT): " + avgWT);
+System.out.println("Average Turnaround Time (TAT): " + avgTAT);
+}
 
     // SJF Scheduling
     public static void sjfScheduling(List<Task> tasks) {
         tasks.sort(Comparator.comparingInt(t -> t.burstTime));
 
         int currentTime = 0;
+        List<Task> orderOfExecution = new ArrayList<>();
+
         for (Task t : tasks) {
             if (currentTime < t.arrivalTime) {
                 currentTime = t.arrivalTime;
@@ -72,10 +100,34 @@ public class SimulationScheduler {
             t.waitingTime = currentTime - t.arrivalTime;
             t.turnaroundTime = t.waitingTime + t.burstTime;
             currentTime += t.burstTime;
+            orderOfExecution.add(t);
+        }
+        // Display Gantt Chart
+        System.out.println("\n📌 Shortest Job First (SJF) Results:");
+        System.out.print("Gantt Chart: ");
+        for (Task t : orderOfExecution) {
+            System.out.print("| P" + t.pid + " ");
+        }
+        System.out.println("|");
+        System.out.print("Timeline: ");
+        currentTime = 0;
+        for (Task t : orderOfExecution) {
+            System.out.print(currentTime + " ");
+            currentTime += t.burstTime;
+        }
+        System.out.println(currentTime);
+
+        // Display the results for each process
+        for (Task t : tasks) {
+            System.out.println(t);
         }
 
-        System.out.println("\n📌 Shortest Job First (SJF) Results:");
-        for (Task t : tasks) System.out.println(t);
+        // Calculate and print average waiting time and turnaround time
+        double avgWT = tasks.stream().mapToInt(t -> t.waitingTime).average().orElse(0);
+        double avgTAT = tasks.stream().mapToInt(t -> t.turnaroundTime).average().orElse(0);
+
+        System.out.println("\nAverage Waiting Time (WT): " + avgWT);
+        System.out.println("Average Turnaround Time (TAT): " + avgTAT);
     }
 
     public static void main(String[] args) {
